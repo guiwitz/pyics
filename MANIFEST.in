@@ -1,6 +1,19 @@
 include README.md
 include LICENSE
 include requirements.txt
+recursive-include libics *.c *.h *.sh *.in *.am *.ac *.cmake *.txt *.m4
+include libics/configure
+include libics/bootstrap.sh
+include libics/CMakeLists.txt
+include libics/Makefile.in
+include libics/ltmain.sh
+include libics/compile
+include libics/config.guess
+include libics/config.sub
+include libics/install-sh
+include libics/missing
+include libics/depcomp
+include libics/test-driver
 recursive-include src/pyics *.py
 recursive-include src/pyics *.so
 recursive-include src/pyics *.so.*
