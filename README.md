@@ -33,10 +33,6 @@ The installation will automatically build the libics shared library.
 - NumPy
 - C compiler (gcc, clang, or MSVC)
 
-### Detailed Installation
-
-See [INSTALL.md](INSTALL.md) for detailed installation instructions including platform-specific notes and troubleshooting.
-
 ### Development Installation
 
 For development work:
@@ -64,8 +60,6 @@ pip install -e .
   # Install VS Build Tools first
   pip install .
   ```
-
-See [CROSS_PLATFORM.md](CROSS_PLATFORM.md) for detailed platform compatibility information and how to create platform-specific wheels.
 
 ## Quick Start
 
@@ -330,10 +324,6 @@ pip install -e ".[dev]"
 python test_wrapper.py
 ```
 
-### Publishing
-
-See [PUBLISHING.md](PUBLISHING.md) for instructions on publishing to PyPI.
-
 ## License
 
 This wrapper is released under the GNU Library General Public License v2, matching the libics library license.
@@ -347,14 +337,6 @@ The libics library is:
 - [libics GitHub Repository](https://github.com/svi-opensource/libics)
 - [ICS File Format Documentation](http://libics.sourceforge.net/)
 - [Scientific Volume Imaging](https://www.svi.nl)
-
-## Cross-Platform Support
-
-This package now includes automated wheel building for all major platforms! See:
-- [CROSS_PLATFORM.md](CROSS_PLATFORM.md) - Platform compatibility details
-- [CI_CD_SETUP.md](CI_CD_SETUP.md) - GitHub Actions setup and usage
-
-After setting up GitHub Actions, users can simply run `pip install pyics` on any platform without needing compilers!
 
 ## Citation
 
