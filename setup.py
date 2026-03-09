@@ -53,8 +53,13 @@ class BuildLibICS(build_ext):
         # Copy the built library to the package
         self.copy_library()
         
-        # Continue with extension building (though we don't have any)
-        super().run()
+        # Don't build any actual extensions (our dummy extension has no sources)
+        # Just skip the parent's build process
+    
+    def build_extension(self, ext):
+        """Override to skip building the dummy extension."""
+        # Skip building the dummy extension - we only needed it to trigger build_ext
+        pass
     
     def build_with_autotools(self, libics_dir):
         """Build using autotools (configure/make)."""
@@ -132,8 +137,18 @@ class BuildLibICS(build_ext):
 
 
 if __name__ == "__main__":
+    # Define a dummy extension to force build_ext to run
+    # This ensures the libics library gets built even though we don't
+    # have actual Python C extensions
+    dummy_ext = Extension(
+        name="pyics._dummy",
+        sources=[],
+        optional=True
+    )
+    
     setup(
         cmdclass={
             'build_ext': BuildLibICS,
         },
+        ext_modules=[dummy_ext],
     )

@@ -55,6 +55,9 @@ jobs:
           CIBW_BEFORE_BUILD_MACOS: brew install zlib || true
           CIBW_BEFORE_BUILD_WINDOWS: ""
           
+          # Ensure build dependencies are available
+          CIBW_BUILD_FRONTEND: "pip"
+          
           # Test the wheels
           CIBW_TEST_REQUIRES: numpy
           CIBW_TEST_COMMAND: python -c "import pyics; print('✓ Import successful')"
