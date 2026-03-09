@@ -51,7 +51,6 @@ pyics = ["*.so", "*.so.*", "*.dylib", "*.dll"]
 
 [tool.setuptools_scm]
 write_to = "src/pyics/_version.py"
-version_scheme = "post-release"
 
 [tool.cibuildwheel]
 # Build for CPython 3.8-3.12
