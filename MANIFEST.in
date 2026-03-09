@@ -1,8 +1,8 @@
 include README.md
 include LICENSE
 include requirements.txt
-recursive-include pyics *.py
-recursive-include pyics *.so
-recursive-include pyics *.so.*
-recursive-include pyics *.dylib
-recursive-include pyics *.dll
+recursive-include src/pyics *.py
+recursive-include src/pyics *.so
+recursive-include src/pyics *.so.*
+recursive-include src/pyics *.dylib
+recursive-include src/pyics *.dll

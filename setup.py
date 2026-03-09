@@ -96,8 +96,8 @@ class BuildLibICS(build_ext):
     
     def copy_library(self):
         """Copy the built library to the package directory."""
-        package_dir = Path(__file__).parent / \"pyics\"
-        package_dir.mkdir(exist_ok=True)
+        package_dir = Path(__file__).parent / "src" / "pyics"
+        package_dir.mkdir(exist_ok=True, parents=True)
         
         # Find the library
         search_dirs = [

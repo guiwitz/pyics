@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyics"
-version = "1.0.0"
+dynamic = ["version"]
 description = "Python wrapper for libics - Image Cytometry Standard file format library"
 readme = "README.md"
 requires-python = ">=3.7"
@@ -42,11 +42,16 @@ Homepage = "https://github.com/svi-opensource/libics"
 Documentation = "https://github.com/svi-opensource/libics"
 
 [tool.setuptools]
+package-dir = {"" = "src"}
 packages = ["pyics"]
 include-package-data = true
 
 [tool.setuptools.package-data]
 pyics = ["*.so", "*.so.*", "*.dylib", "*.dll"]
+
+[tool.setuptools_scm]
+write_to = "src/pyics/_version.py"
+version_scheme = "post-release"
 
 [tool.cibuildwheel]
 # Build for CPython 3.8-3.12
