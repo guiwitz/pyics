@@ -2,6 +2,16 @@
 
 A Python wrapper for [libics](https://github.com/svi-opensource/libics) - the Image Cytometry Standard (ICS) file format library. This wrapper provides a simple interface to read and write ICS/IDS format images directly as numpy arrays.
 
+---
+
+⚠️ **WARNING** ⚠️
+
+This software has been written by Claude Sonnet and has not been thoroughly reviewed or tested. **Not for general use.**
+
+⚠️ **WARNING** ⚠️
+
+---
+
 ## Features
 
 - 🔄 Read ICS/IDS format images directly as numpy arrays
