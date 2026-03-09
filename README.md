@@ -319,9 +319,8 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 ### Development Setup
 
 ```bash
-git clone https://github.com/yourusername/ics_wrapper.git
-cd ics_wrapper
-python build_libics.py
+git clone https://github.com/guiwitz/pyics.git
+cd pyics
 pip install -e ".[dev]"
 ```
 

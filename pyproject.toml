@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.7"
 license = {text = "LGPL-2.0-or-later"}
 authors = [
-    {name = "ICS Wrapper Contributors"}
+    {name = "Guillaume Witz", email = "guillaume.witz@unibe.ch"}
 ]
 keywords = ["ics", "ids", "microscopy", "image", "cytometry"]
 classifiers = [
@@ -38,8 +38,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/svi-opensource/libics"
-Documentation = "https://github.com/svi-opensource/libics"
+Homepage = "https://github.com/guiwitz/pyics"
+Documentation = "https://github.com/guiwitz/pyics"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

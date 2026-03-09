@@ -10,7 +10,7 @@ try:
 except ImportError:
     __version__ = "0.0.0+unknown"
 
-__author__ = "ICS Wrapper Contributors"
+__author__ = "Guillaume Witz"
 __license__ = "LGPL-2.0-or-later"
 
 import ctypes
