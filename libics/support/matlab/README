@@ -1,0 +1,72 @@
+
+libics MATLAB interface
+=======================
+
+This directory contains the sources for MATLAB MEX-files
+that use libics to read and write ICS files. They serve
+as examples on how to use libics, but are also useful for
+people that use MATLAB and want to add ICS support.
+
+The code in this directory falls under the same licence
+terms as libics itself.
+
+This code is currently not supported by Scientific Volume Imaging.
+
+USAGE
+=====
+
+The two MEX-files are used in this way:
+
+-------------------------------------------------------------
+ICSREAD   Reads a numeric array from an ICS file.
+    A = ICSREAD(FILENAME) reads the numeric data in
+    an ICS image file named FILENAME into A.
+
+    Known limitations:
+       - Complex data is not read.
+-------------------------------------------------------------
+ICSWRITE   Writes a numeric array to an ICS file.
+    ICSWRITE(A,FILENAME,COMPRESS) writes the numeric data
+    in A to an ICS image file named FILENAME. If COMPRESS
+    is non-zero the data will be written compressed.
+
+    Known limitations:
+       - Complex data is not written.
+-------------------------------------------------------------
+
+
+COMPILING
+=========
+
+If your version of MATLAB is 7.2 or older, uncomment the line at
+the top of both source files that defines `mwSize`.
+
+- UNIX or macOS:
+Within MATLAB, type
+  mex -I<icspath> icsread.c <icspath>/libics.a -lz
+  mex -I<icspath> icswrite.c <icspath>/libics.a -lz
+from the directory containing both source files. If the Zlib library is not in a standard location, you will have
+to specify it explicitly, replace `-lz` with `<zlibpath>/libz.a`.
+
+- Windows:
+Within MATLAB, type:
+  mex -I<icspath> -DWIN32 icsread.c <icspath>\libics.lib <zpath>\libz.lib
+  mex -I<icspath> -DWIN32 icswrite.c <icspath>\libics.lib <zpath>\libz.lib
+from the directory containing both source files. If you compiled
+the dynamic version of libics (DLL) you should type this instead:
+  mex -I<icspath> -DWIN32 -DUSE_ICSLIB_DLL icsread.c <icspath>\libics.lib <zpath>\libz.lib
+  mex -I<icspath> -DWIN32 -DUSE_ICSLIB_DLL icswrite.c <icspath>\libics.lib <zpath>\libz.lib
+Finally, if you used MinGW or Cygwin under Windows to compile libics,
+you can use Gnumex (http://gnumex.sourceforge.net/) to configure your
+MEX script correctly.
+
+Alternatively, use the makefile from the system's prompt. The
+provided makefile is written for both Borland BCC and Microsoft
+Visual C++ (under Windows), but should be easy to adapt to another
+system/compiler. Note that you need to configure MEX before running
+the makefile.
+
+
+-------------------------------------------------------------
+Copyright (C) 2000-2010 Cris Luengo and others
+-------------------------------------------------------------
