@@ -202,21 +202,22 @@ The example script demonstrates:
 ## Project Structure
 
 ```
-ics_wrapper/
-├── pyics/              # Main Python package
-│   ├── __init__.py     # Package module (wrapper implementation)
-│   └── libics.*.dylib  # Compiled shared library (after build)
-├── libics/              # libics C library (submodule/clone)
-├── build/               # Build directory (created during build)
-├── example.py          # Example usage script
-├── test_wrapper.py     # Test suite
-├── build_libics.py     # Build script for compiling libics
-├── setup.py            # Setup script for pip installation
+pyics/
+├── src/
+│   └── pyics/          # Python package
+│       ├── __init__.py     # Package initialization and exports
+│       ├── io.py           # imread/imwrite functions
+│       ├── library.py      # ICSLibrary wrapper class
+│       ├── utils.py        # Helper functions
+│       ├── constants.py    # Type mappings and constants
+│       └── libics.*.dylib  # Compiled shared library (after build)
+├── libics/             # libics C library source code
+├── setup.py            # Build and installation script
 ├── pyproject.toml      # Package configuration
-├── MANIFEST.in         # Package manifest
 ├── requirements.txt    # Python dependencies
-├── INSTALL.md          # Detailed installation guide
+├── MANIFEST.in         # Package manifest
 ├── LICENSE             # License file
+├── .gitignore          # Git ignore patterns
 └── README.md           # This file
 ```
 
