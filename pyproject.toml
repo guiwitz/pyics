@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyics"
+version = "1.0.0"
+description = "Python wrapper for libics - Image Cytometry Standard file format library"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "LGPL-2.0-or-later"}
+authors = [
+    {name = "ICS Wrapper Contributors"}
+]
+keywords = ["ics", "ids", "microscopy", "image", "cytometry"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+dependencies = [
+    "numpy>=1.19.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov",
+]
+
+[project.urls]
+Homepage = "https://github.com/svi-opensource/libics"
+Documentation = "https://github.com/svi-opensource/libics"
+
+[tool.setuptools]
+packages = ["pyics"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+pyics = ["*.so", "*.so.*", "*.dylib", "*.dll"]
+
+[tool.cibuildwheel]
+# Build for CPython 3.8-3.12
+build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "cp312-*"]
+
+# Skip 32-bit builds and musllinux
+skip = ["*-win32", "*-manylinux_i686", "*-musllinux_*"]
+
+# Test the built wheels
+test-requires = "numpy"
+test-command = "python -c \"import pyics; print('Import successful')\""
+
+# Build verbosity
+build-verbosity = 1
+
+[tool.cibuildwheel.linux]
+before-build = "yum install -y zlib-devel || apt-get install -y zlib1g-dev"
+repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
+
+[tool.cibuildwheel.macos]
+before-build = "brew install zlib || true"
+repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
+
+[tool.cibuildwheel.windows]
+before-build = "pip install delvewheel"
+repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"

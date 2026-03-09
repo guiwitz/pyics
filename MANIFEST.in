@@ -1,0 +1,8 @@
+include README.md
+include LICENSE
+include requirements.txt
+recursive-include pyics *.py
+recursive-include pyics *.so
+recursive-include pyics *.so.*
+recursive-include pyics *.dylib
+recursive-include pyics *.dll
