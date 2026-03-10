@@ -69,6 +69,9 @@ class BuildLibICS(build_ext):
             dummy_marker = package_dir / "_dummy.py"
             dummy_marker.write_text("# Dummy module to mark platform wheel\n")
             print(f"Created marker: {dummy_marker}")
+            
+            # Also copy the library to build_lib so it's included in the wheel
+            self.copy_library_to_build()
         else:
             super().build_extension(ext)
     
@@ -152,6 +155,52 @@ class BuildLibICS(build_ext):
             raise RuntimeError(
                 f"Could not find built library in {search_dirs}. "
                 "Build may have failed."
+            )
+    
+    def copy_library_to_build(self):
+        """Copy the built library to the build directory for wheel packaging."""
+        import shutil
+        
+        # Get the build_lib directory where built packages go
+        build_lib = Path(self.build_lib)
+        package_dir = build_lib / "pyics"
+        package_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Find the library in the same locations
+        search_dirs = [
+            Path(__file__).parent / "libics" / ".libs",
+            Path(__file__).parent / "libics",
+            Path(__file__).parent / "build",
+            Path(__file__).parent / "src" / "pyics",  # May have been copied here already
+        ]
+        
+        system = platform.system()
+        if system == "Windows":
+            lib_patterns = ["*.dll"]
+        elif system == "Darwin":
+            lib_patterns = ["*.dylib", "*.*.dylib"]
+        else:
+            lib_patterns = ["*.so", "*.so.*"]
+        
+        found = False
+        for search_dir in search_dirs:
+            if not search_dir.exists():
+                continue
+            for pattern in lib_patterns:
+                libs = list(search_dir.glob(pattern))
+                for lib_file in libs:
+                    if lib_file.is_symlink():
+                        continue
+                    target = package_dir / lib_file.name
+                    print(f"Copying {lib_file} to build: {target}")
+                    shutil.copy2(lib_file, target)
+                    print(f"✓ Library copied to build directory: {target}")
+                    found = True
+        
+        if not found:
+            raise RuntimeError(
+                f"Could not find library to copy to build directory. "
+                f"Searched: {search_dirs}"
             )
 
 
