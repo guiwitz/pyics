@@ -69,6 +69,15 @@ jobs:
         run: |
           brew install zlib
       
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
+      
+      - name: Set up MSVC (Windows)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+      
       - name: Build wheels (macOS - manual)
         if: runner.os == 'macOS'
         run: |

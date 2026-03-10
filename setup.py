@@ -113,7 +113,12 @@ class BuildLibICS(build_ext):
             ])
         
         subprocess.check_call(cmake_args, cwd=build_dir)
-        subprocess.check_call(["cmake", "--build", "."], cwd=build_dir)
+        
+        # Build command with configuration for MSVC
+        build_cmd = ["cmake", "--build", "."]
+        if platform.system() == "Windows":
+            build_cmd.extend(["--config", "Release"])
+        subprocess.check_call(build_cmd, cwd=build_dir)
     
     def copy_library(self):
         """Copy the built library to the package directory."""
@@ -125,6 +130,9 @@ class BuildLibICS(build_ext):
             Path(__file__).parent / "libics" / ".libs",
             Path(__file__).parent / "libics",  # Sometimes library is in root
             Path(__file__).parent / "build",
+            Path(__file__).parent / "build" / "Debug",  # MSVC Debug build
+            Path(__file__).parent / "build" / "Release",  # MSVC Release build
+            Path(__file__).parent / "build" / "RelWithDebInfo",  # MSVC RelWithDebInfo
         ]
         
         system = platform.system()
@@ -173,6 +181,9 @@ class BuildLibICS(build_ext):
             Path(__file__).parent / "libics" / ".libs",
             Path(__file__).parent / "libics",
             Path(__file__).parent / "build",
+            Path(__file__).parent / "build" / "Debug",  # MSVC Debug build
+            Path(__file__).parent / "build" / "Release",  # MSVC Release build
+            Path(__file__).parent / "build" / "RelWithDebInfo",  # MSVC RelWithDebInfo
             Path(__file__).parent / "src" / "pyics",  # May have been copied here already
         ]
         
