@@ -17,7 +17,8 @@ jobs:
       fail-fast: false
       matrix:
         # Temporarily skip windows-2022 due to GitHub rate limits
-        os: [ubuntu-22.04, macos-12, macos-14]
+        os: [ubuntu-22.04]
+        #, macos-12, macos-14]
     
     steps:
       - name: Checkout code
@@ -26,7 +27,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.12'
       
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
@@ -87,7 +88,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.12'
       
       - name: Install build dependencies
         run: |
@@ -111,7 +112,8 @@ jobs:
     strategy:
       matrix:
         # Temporarily skip windows-2022 due to GitHub rate limits
-        os: [ubuntu-22.04, macos-12]
+        os: [ubuntu-22.04]
+        #, macos-12]
         python-version: ['3.10', '3.11', '3.12']
     
     steps:
