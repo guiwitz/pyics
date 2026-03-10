@@ -49,34 +49,22 @@ jobs:
         run: |
           brew install zlib
       
-      - name: Build wheels
+      - name: Build wheels (macOS - manual)
+        if: runner.os == 'macOS'
+        run: |
+          python -m pip install --upgrade pip wheel build setuptools
+          python -m pip wheel . --wheel-dir=wheelhouse --no-deps -v
+      
+      - name: Build wheels (Linux - cibuildwheel)
+        if: runner.os == 'Linux'
         uses: pypa/cibuildwheel@v2.22.0
         with:
           output-dir: wheelhouse
         env:
-          # Authenticate to avoid GitHub rate limits
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-          # Build for all Python versions
-          CIBW_BUILD: ${{ runner.os == 'macOS' && 'cp312-*' || 'cp310-* cp311-* cp312-*' }}
-          
-          # Skip 32-bit builds and musllinux (for simplicity)
+          CIBW_BUILD: cp310-* cp311-* cp312-*
           CIBW_SKIP: "*-win32 *-manylinux_i686 *-musllinux_*"
-          
-          # Platform-specific settings
-          # manylinux containers run as root and use yum
           CIBW_BEFORE_BUILD_LINUX: yum install -y zlib-devel || true
-          CIBW_BEFORE_BUILD_MACOS: brew install zlib || true
-          CIBW_BEFORE_BUILD_WINDOWS: ""
-          
-          # Use pip directly without virtualenv
-          CIBW_BUILD_FRONTEND: "build"
-          
-          # Skip testing during build - test separately in test_wheels job
-          # CIBW_TEST_REQUIRES: numpy
-          # CIBW_TEST_COMMAND: python -c "import pyics; print('✓ Import successful')"
-          
-          # Build settings
           CIBW_BUILD_VERBOSITY: 1
       
       - name: Inspect built wheels
