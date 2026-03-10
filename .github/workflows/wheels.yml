@@ -58,6 +58,9 @@ jobs:
           # Authenticate to avoid GitHub rate limits
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
+          # Use system pip instead of downloading virtualenv.pyz to avoid rate limits
+          CIBW_DEPENDENCY_VERSIONS: "pip"
+          
           # Build for Python 3.10-3.12
           CIBW_BUILD: cp310-* cp311-* cp312-*
           
