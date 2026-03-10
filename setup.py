@@ -53,8 +53,9 @@ class BuildLibICS(build_ext):
         # Copy the built library to the package
         self.copy_library()
         
-        # Don't build any actual extensions (our dummy extension has no sources)
-        # Just skip the parent's build process
+        # Now run the parent's build_ext to process extensions
+        # This will call build_extension() for our dummy extension
+        super().run()
     
     def build_extension(self, ext):
         """Override to skip building the dummy extension but create a marker."""
