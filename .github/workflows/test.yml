@@ -59,22 +59,22 @@ jobs:
       
       - name: Test basic functionality
         run: |
-          python -c "
+          python -c '
 import pyics
 import numpy as np
 
 # Test imwrite
 test_img = np.random.randint(0, 255, (100, 100), dtype=np.uint8)
-pyics.imwrite('test.ics', test_img)
-print('✓ imwrite test passed')
+pyics.imwrite("test.ics", test_img)
+print("✓ imwrite test passed")
 
 # Test imread
-img, metadata = pyics.imread('test.ics', fix_dimensions=False)
-print(f'✓ imread test passed - shape: {img.shape}')
+img, metadata = pyics.imread("test.ics", fix_dimensions=False)
+print(f"✓ imread test passed - shape: {img.shape}")
 
-assert img.shape == (100, 100), f'Shape mismatch: {img.shape}'
-print('✓ All tests passed')
-"
+assert img.shape == (100, 100), f"Shape mismatch: {img.shape}"
+print("✓ All tests passed")
+'
       
       - name: Check installed location
         run: |
@@ -138,20 +138,20 @@ print('✓ All tests passed')
       
       - name: Run tests with coverage
         run: |
-          python -c "
+          python -c '
 import pyics
 import numpy as np
 
-print('Running basic coverage tests...')
+print("Running basic coverage tests...")
 
 # Test multiple data types
 for dtype in [np.uint8, np.uint16, np.int16, np.float32, np.float64]:
     img = np.random.randint(0, 100, (50, 50)).astype(dtype)
-    pyics.imwrite(f'test_{dtype.__name__}.ics', img)
-    loaded, _ = pyics.imread(f'test_{dtype.__name__}.ics', fix_dimensions=False)
+    pyics.imwrite(f"test_{dtype.__name__}.ics", img)
+    loaded, _ = pyics.imread(f"test_{dtype.__name__}.ics", fix_dimensions=False)
     assert loaded.dtype == dtype
-    print(f'✓ {dtype.__name__} test passed')
+    print(f"✓ {dtype.__name__} test passed")
 
-print('✓ All coverage tests passed')
-"
+print("✓ All coverage tests passed")
+'
         continue-on-error: true
