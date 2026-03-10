@@ -16,7 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-13, macos-14, windows-2022]
+        # Temporarily skip windows-2022 due to GitHub rate limits
+        os: [ubuntu-22.04, macos-13, macos-14]
     
     steps:
       - name: Checkout code
@@ -109,7 +110,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-13, windows-2022]
+        # Temporarily skip windows-2022 due to GitHub rate limits
+        os: [ubuntu-22.04, macos-13]
         python-version: ['3.9', '3.11', '3.12']
     
     steps:
