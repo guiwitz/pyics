@@ -64,9 +64,9 @@ jobs:
           # Ensure build dependencies are available
           CIBW_BUILD_FRONTEND: "pip"
           
-          # Test the wheels
-          CIBW_TEST_REQUIRES: numpy
-          CIBW_TEST_COMMAND: python -c "import pyics; print('✓ Import successful')"
+          # Skip testing during build - test separately in test_wheels job
+          # CIBW_TEST_REQUIRES: numpy
+          # CIBW_TEST_COMMAND: python -c "import pyics; print('✓ Import successful')"
           
           # Build settings
           CIBW_BUILD_VERBOSITY: 1
@@ -131,11 +131,21 @@ jobs:
           name: wheels-${{ matrix.os }}
           path: wheelhouse
       
+      - name: List downloaded wheels
+        run: ls -lh wheelhouse/
+        shell: bash
+      
+      - name: Show Python info
+        run: |
+          python --version
+          python -c "import sys; print(f'Platform: {sys.platform}'); import platform; print(f'Machine: {platform.machine()}')"
+        shell: bash
+      
       - name: Install wheel
         run: |
           python -m pip install --upgrade pip
           pip install numpy
-          pip install wheelhouse/*.whl
+          pip install --verbose wheelhouse/*.whl
         shell: bash
       
       - name: Test import
