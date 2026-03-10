@@ -11,13 +11,33 @@ on:
 
 jobs:
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}
+    name: Build wheels on ${{ matrix.os }} ${{ matrix.python-version && format('- Python {0}', matrix.python-version) || '' }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-14]
-        # Temporarily skip windows-2022 due to GitHub rate limits
+        include:
+          # Linux: single job builds all Python versions via cibuildwheel
+          - os: ubuntu-22.04
+            python-version: '3.12'
+          # macOS: separate job per Python version for manual builds
+          - os: macos-14
+            python-version: '3.10'
+          - os: macos-14
+            python-version: '3.11'
+          - os: macos-14
+            python-version: '3.12'
+          - os: macos-14
+            python-version: '3.13'
+          # Windows: separate job per Python version for manual builds
+          - os: windows-2022
+            python-version: '3.10'
+          - os: windows-2022
+            python-version: '3.11'
+          - os: windows-2022
+            python-version: '3.12'
+          - os: windows-2022
+            python-version: '3.13'
     
     steps:
       - name: Checkout code
@@ -26,7 +46,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: ${{ matrix.python-version }}
       
       - name: Cache cibuildwheel tools
         uses: actions/cache@v4
@@ -55,6 +75,12 @@ jobs:
           python -m pip install --upgrade pip wheel build setuptools
           python -m pip wheel . --wheel-dir=wheelhouse --no-deps -v
       
+      - name: Build wheels (Windows - manual)
+        if: runner.os == 'Windows'
+        run: |
+          python -m pip install --upgrade pip wheel build setuptools
+          python -m pip wheel . --wheel-dir=wheelhouse --no-deps -v
+      
       - name: Build wheels (Linux - cibuildwheel)
         if: runner.os == 'Linux'
         uses: pypa/cibuildwheel@v2.22.0
@@ -62,7 +88,7 @@ jobs:
           output-dir: wheelhouse
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CIBW_BUILD: cp310-* cp311-* cp312-*
+          CIBW_BUILD: cp310-* cp311-* cp312-* cp313-*
           CIBW_SKIP: "*-win32 *-manylinux_i686 *-musllinux_*"
           CIBW_BEFORE_BUILD_LINUX: yum install -y zlib-devel || true
           CIBW_BUILD_VERBOSITY: 1
@@ -79,7 +105,7 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}
+          name: wheels-${{ matrix.os }}-${{ matrix.python-version }}
           path: ./wheelhouse/*.whl
           retention-days: 7
 
@@ -116,14 +142,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-14]
-        python-version: ['3.10', '3.11', '3.12']
-        exclude:
-          # Only build Python 3.12 on macOS
-          - os: macos-14
-            python-version: '3.10'
-          - os: macos-14
-            python-version: '3.11'
+        os: [ubuntu-22.04, macos-14, windows-2022]
+        python-version: ['3.10', '3.11', '3.12', '3.13']
     
     steps:
       - name: Checkout code (for tests)
@@ -137,8 +157,9 @@ jobs:
       - name: Download wheels
         uses: actions/download-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}
+          name: wheels-${{ matrix.os }}-${{ matrix.os == 'ubuntu-22.04' && '3.12' || matrix.python-version }}
           path: wheelhouse
+        continue-on-error: true
       
       - name: List downloaded wheels
         run: ls -lh wheelhouse/
