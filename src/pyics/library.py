@@ -39,11 +39,11 @@ class ICSLibrary:
         
         # Common library names by platform
         if system == "Windows":
-            lib_names = ["libics.dll", "ics.dll"]
+            lib_patterns = ["libics.dll", "ics.dll"]
         elif system == "Darwin":  # macOS
-            lib_names = ["libics.dylib", "libics.0.dylib", "libics.so"]
+            lib_patterns = ["libics.dylib", "libics.*.dylib", "libics.so"]
         else:  # Linux and others
-            lib_names = ["libics.so", "libics.so.2", "libics.so.1", "libics.so.0"]
+            lib_patterns = ["libics.so", "libics.so.*"]
         
         # Search in common locations
         search_paths = [
@@ -57,10 +57,11 @@ class ICSLibrary:
         for path in search_paths:
             if not path.exists():
                 continue
-            for lib_name in lib_names:
-                lib_path = path / lib_name
-                if lib_path.exists():
-                    return str(lib_path)
+            for pattern in lib_patterns:
+                # Use glob for pattern matching
+                for lib_path in path.glob(pattern):
+                    if lib_path.exists() and lib_path.is_file():
+                        return str(lib_path)
         
         raise ICSError(
             f"Could not find libics shared library. "
