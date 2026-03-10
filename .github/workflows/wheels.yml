@@ -71,6 +71,14 @@ jobs:
           # Build settings
           CIBW_BUILD_VERBOSITY: 1
       
+      - name: Inspect built wheels
+        run: |
+          echo "=== Listing wheels ==="
+          ls -lh wheelhouse/
+          echo "=== Inspecting first wheel contents ==="
+          python -m zipfile -l wheelhouse/*.whl | head -50
+        shell: bash
+      
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:

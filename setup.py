@@ -13,7 +13,7 @@ import sys
 import subprocess
 import platform
 from pathlib import Path
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 from setuptools.command.build_py import build_py
 from setuptools.command.install import install
@@ -292,4 +292,8 @@ if __name__ == "__main__":
             'build_ext': BuildLibICS,
         },
         ext_modules=[dummy_ext],
+        # Explicitly include library files with package
+        package_data={
+            'pyics': ['*.so', '*.so.*', '*.dylib', '*.dll'],
+        },
     )
