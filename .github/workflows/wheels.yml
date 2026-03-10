@@ -193,7 +193,7 @@ jobs:
       
       - name: Run basic test
         run: |
-          python -c "
+          python -c '
           import numpy as np
           from pyics import imread, imwrite
           
@@ -201,18 +201,18 @@ jobs:
           img = np.random.randint(0, 255, (100, 100), dtype=np.uint8)
           
           # Write
-          imwrite('test.ics', img)
-          print('Write successful')
+          imwrite("test.ics", img)
+          print("Write successful")
           
           # Read
-          img2, meta = imread('test.ics', fix_dimensions=False)
-          print('Read successful')
+          img2, meta = imread("test.ics", fix_dimensions=False)
+          print("Read successful")
           
           # Verify
           assert np.array_equal(img, img2)
-          print('Data integrity verified')
-          print(f'All tests passed on {meta["dtype"].__name__}')
-          "
+          print("Data integrity verified")
+          print(f"All tests passed on {meta[\"dtype\"].__name__}")
+          '
 
   upload_pypi:
     name: Upload to PyPI
