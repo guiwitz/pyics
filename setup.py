@@ -15,6 +15,7 @@ import platform
 from pathlib import Path
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
+from setuptools.command.build_py import build_py
 from setuptools.command.install import install
 
 
@@ -205,6 +206,16 @@ class BuildLibICS(build_ext):
             )
 
 
+class CustomBuildPy(build_py):
+    """Custom build_py to ensure library is built before collecting files."""
+    
+    def run(self):
+        # Run build_ext first to build and copy the library
+        self.run_command('build_ext')
+        # Then run normal build_py to collect Python files
+        super().run()
+
+
 if __name__ == "__main__":
     from setuptools.dist import Distribution
     
@@ -225,6 +236,7 @@ if __name__ == "__main__":
     setup(
         distclass=BinaryDistribution,
         cmdclass={
+            'build_py': CustomBuildPy,
             'build_ext': BuildLibICS,
         },
         ext_modules=[dummy_ext],
