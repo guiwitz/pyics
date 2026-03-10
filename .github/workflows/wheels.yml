@@ -16,9 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Only build on Linux for now - macOS hitting GitHub rate limits
-        os: [ubuntu-22.04]
-        # Temporarily skip windows-2022 and macOS due to GitHub rate limits
+        os: [ubuntu-22.04, macos-14]
+        # Temporarily skip windows-2022 due to GitHub rate limits
     
     steps:
       - name: Checkout code
@@ -58,8 +57,8 @@ jobs:
           # Authenticate to avoid GitHub rate limits
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
-          # Build for all Python versions on Linux only (macOS rate limited)
-          CIBW_BUILD: cp310-* cp311-* cp312-*
+          # Build for all Python versions
+          CIBW_BUILD: ${{ runner.os == 'macOS' && 'cp312-*' || 'cp310-* cp311-* cp312-*' }}
           
           # Skip 32-bit builds and musllinux (for simplicity)
           CIBW_SKIP: "*-win32 *-manylinux_i686 *-musllinux_*"
@@ -70,8 +69,8 @@ jobs:
           CIBW_BEFORE_BUILD_MACOS: brew install zlib || true
           CIBW_BEFORE_BUILD_WINDOWS: ""
           
-          # Ensure build dependencies are available
-          CIBW_BUILD_FRONTEND: "pip"
+          # Use pip directly without virtualenv
+          CIBW_BUILD_FRONTEND: "build"
           
           # Skip testing during build - test separately in test_wheels job
           # CIBW_TEST_REQUIRES: numpy
@@ -129,9 +128,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04]
-        # Temporarily skip windows-2022 and macOS due to GitHub rate limits
+        os: [ubuntu-22.04, macos-14]
         python-version: ['3.10', '3.11', '3.12']
+        exclude:
+          # Only build Python 3.12 on macOS
+          - os: macos-14
+            python-version: '3.10'
+          - os: macos-14
+            python-version: '3.11'
     
     steps:
       - name: Checkout code (for tests)
