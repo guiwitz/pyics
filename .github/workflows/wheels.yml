@@ -76,7 +76,8 @@ jobs:
           echo "=== Listing wheels ==="
           ls -lh wheelhouse/
           echo "=== Inspecting first wheel contents ==="
-          python -m zipfile -l wheelhouse/*.whl | head -50
+          FIRST_WHEEL=$(ls wheelhouse/*.whl | head -1)
+          python -m zipfile -l "$FIRST_WHEEL" | head -50
         shell: bash
       
       - name: Upload wheels
