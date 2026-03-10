@@ -57,9 +57,20 @@ class BuildLibICS(build_ext):
         # Just skip the parent's build process
     
     def build_extension(self, ext):
-        """Override to skip building the dummy extension."""
-        # Skip building the dummy extension - we only needed it to trigger build_ext
-        pass
+        """Override to skip building the dummy extension but create a marker."""
+        if ext.name == "pyics._dummy":
+            # Create an empty marker file to make setuptools happy
+            # This ensures the wheel is marked as platform-specific
+            build_lib = Path(self.build_lib)
+            package_dir = build_lib / "pyics"
+            package_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Create empty __dummy.py to mark as extension package
+            dummy_marker = package_dir / "_dummy.py"
+            dummy_marker.write_text("# Dummy module to mark platform wheel\n")
+            print(f"Created marker: {dummy_marker}")
+        else:
+            super().build_extension(ext)
     
     def build_with_autotools(self, libics_dir):
         """Build using autotools (configure/make)."""
@@ -107,6 +118,7 @@ class BuildLibICS(build_ext):
         # Find the library
         search_dirs = [
             Path(__file__).parent / "libics" / ".libs",
+            Path(__file__).parent / "libics",  # Sometimes library is in root
             Path(__file__).parent / "build",
         ]
         
@@ -114,39 +126,54 @@ class BuildLibICS(build_ext):
         if system == "Windows":
             lib_patterns = ["*.dll"]
         elif system == "Darwin":
-            lib_patterns = ["*.dylib"]
+            lib_patterns = ["*.dylib", "*.*.dylib"]
         else:
             lib_patterns = ["*.so", "*.so.*"]
         
+        found = False
         for search_dir in search_dirs:
             if not search_dir.exists():
                 continue
             for pattern in lib_patterns:
                 libs = list(search_dir.glob(pattern))
-                if libs:
-                    lib_file = libs[0]
+                for lib_file in libs:
+                    # Skip symlinks, get actual files
+                    if lib_file.is_symlink():
+                        continue
                     target = package_dir / lib_file.name
                     print(f"Copying {lib_file} to {target}")
                     
                     import shutil
                     shutil.copy2(lib_file, target)
                     print(f"✓ Library copied to package: {target}")
-                    return
+                    found = True
         
-        raise RuntimeError("Could not find built library to copy to package")
+        if not found:
+            raise RuntimeError(
+                f"Could not find built library in {search_dirs}. "
+                "Build may have failed."
+            )
 
 
 if __name__ == "__main__":
+    from setuptools.dist import Distribution
+    
+    # Custom distribution to force platform-specific wheels
+    class BinaryDistribution(Distribution):
+        def has_ext_modules(self):
+            return True
+    
     # Define a dummy extension to force build_ext to run
     # This ensures the libics library gets built even though we don't
     # have actual Python C extensions
     dummy_ext = Extension(
         name="pyics._dummy",
         sources=[],
-        optional=True
+        optional=False  # Changed from True to ensure it's not skipped
     )
     
     setup(
+        distclass=BinaryDistribution,
         cmdclass={
             'build_ext': BuildLibICS,
         },
