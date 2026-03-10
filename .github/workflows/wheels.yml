@@ -189,7 +189,7 @@ jobs:
         shell: bash
       
       - name: Test import
-        run: python -c "import pyics; print('✓ Import successful')"
+        run: python -c "import pyics; print('Import successful')"
       
       - name: Run basic test
         run: |
@@ -202,16 +202,16 @@ jobs:
           
           # Write
           imwrite('test.ics', img)
-          print('✓ Write successful')
+          print('Write successful')
           
           # Read
           img2, meta = imread('test.ics', fix_dimensions=False)
-          print('✓ Read successful')
+          print('Read successful')
           
           # Verify
           assert np.array_equal(img, img2)
-          print('✓ Data integrity verified')
-          print(f'✓ All tests passed on {meta[\"dtype\"].__name__}')
+          print('Data integrity verified')
+          print(f'All tests passed on {meta["dtype"].__name__}')
           "
 
   upload_pypi:
