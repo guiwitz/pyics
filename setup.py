@@ -158,7 +158,7 @@ class BuildLibICS(build_ext):
                     
                     import shutil
                     shutil.copy2(lib_file, target)
-                    print(f"✓ Library copied to package: {target}")
+                    print(f"Library copied to package: {target}")
                     found = True
         
         if not found:
@@ -207,7 +207,7 @@ class BuildLibICS(build_ext):
                     target = package_dir / lib_file.name
                     print(f"Copying {lib_file} to build: {target}")
                     shutil.copy2(lib_file, target)
-                    print(f"✓ Library copied to build directory: {target}")
+                    print(f"Library copied to build directory: {target}")
                     found = True
         
         if not found:
