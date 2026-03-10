@@ -212,6 +212,47 @@ class CustomBuildPy(build_py):
     def run(self):
         # Run build_ext first to build and copy the library
         self.run_command('build_ext')
+        
+        # Ensure library is in src/pyics for inclusion
+        # Get the build_ext command to access its methods
+        build_ext_cmd = self.get_finalized_command('build_ext')
+        
+        # Copy library to src directory before collecting files
+        src_package_dir = Path(__file__).parent / "src" / "pyics"
+        src_package_dir.mkdir(exist_ok=True, parents=True)
+        
+        # Find and copy library files
+        import shutil
+        system = platform.system()
+        if system == "Windows":
+            lib_patterns = ["*.dll"]
+        elif system == "Darwin":
+            lib_patterns = ["*.dylib", "*.*.dylib"]
+        else:
+            lib_patterns = ["*.so", "*.so.*"]
+        
+        search_dirs = [
+            Path(__file__).parent / "libics" / ".libs",
+            Path(__file__).parent / "libics",
+            Path(__file__).parent / "build",
+        ]
+        
+        lib_copied = False
+        for search_dir in search_dirs:
+            if not search_dir.exists():
+                continue
+            for pattern in lib_patterns:
+                for lib_file in search_dir.glob(pattern):
+                    if lib_file.is_symlink():
+                        continue
+                    target = src_package_dir / lib_file.name
+                    print(f"[build_py] Copying {lib_file} to {target}")
+                    shutil.copy2(lib_file, target)
+                    lib_copied = True
+        
+        if not lib_copied:
+            print(f"WARNING: No library files found in {search_dirs}")
+        
         # Then run normal build_py to collect Python files
         super().run()
         
