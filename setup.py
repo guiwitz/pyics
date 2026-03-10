@@ -214,6 +214,17 @@ class CustomBuildPy(build_py):
         self.run_command('build_ext')
         # Then run normal build_py to collect Python files
         super().run()
+        
+        # Debug: List what was copied
+        print("=" * 60)
+        print("Files in build directory:")
+        build_lib = Path(self.build_lib) / "pyics"
+        if build_lib.exists():
+            for f in build_lib.iterdir():
+                print(f"  {f.name} ({f.stat().st_size} bytes)")
+        else:
+            print(f"  WARNING: {build_lib} does not exist!")
+        print("=" * 60)
 
 
 if __name__ == "__main__":
