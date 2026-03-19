@@ -213,12 +213,14 @@ jobs:
           print("Data integrity verified")
           '
 
-  upload_pypi:
-    name: Upload to PyPI
+  release_github:
+    name: Create GitHub Release
     needs: [build_wheels, build_sdist, test_wheels]
     runs-on: ubuntu-latest
-    # Only upload on tagged releases
+    # Only create release on tagged releases
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
     
     steps:
       - name: Download all artifacts
@@ -228,13 +230,15 @@ jobs:
       
       - name: Organize artifacts
         run: |
-          mkdir -p dist
-          mv dist-all/wheels-*/*.whl dist/
-          mv dist-all/sdist/*.tar.gz dist/
-          ls -lh dist/
+          mkdir -p release-assets
+          mv dist-all/wheels-*/*.whl release-assets/
+          mv dist-all/sdist/*.tar.gz release-assets/
+          ls -lh release-assets/
       
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
-          skip-existing: true
+          files: release-assets/*
+          generate_release_notes: true
+          draft: false
+          prerelease: false
